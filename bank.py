@@ -1,62 +1,89 @@
-def show_balance():
-    global balance
-    print(f"Your balance is Ksh{balance:.2f}")
+import json
+import os
 
-def deposit():
-    global balance
-    try:
-        amount = float(input("Enter amount to deposit: "))
+
+class BankAccount:
+    def __init__(self, username, filename="accounts.json"):
+        self.username = username
+        self.filename = filename
+        self.balance = self.load_balance()
+
+    def load_balance(self):
+        if os.path.exists(self.filename):
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+                return data.get(self.username, 0.0)
+        return 0.0
+
+    def save_balance(self):
+        data = {}
+        if os.path.exists(self.filename):
+            with open(self.filename, "r") as f:
+                data = json.load(f)
+        data[self.username] = self.balance
+        with open(self.filename, "w") as f:
+            json.dump(data, f)
+
+    def show_balance(self):
+        print(f"Your balance is Ksh{self.balance:.2f}")
+
+    def deposit(self, amount):
         if amount <= 0:
-            print("Please enter a positive amount.")
-            return 0
-        print(f"Ksh{amount:.2f} deposited successfully!" )
-        return amount 
-    except ValueError:
-        print("Invalid input. Please enter a numeric value.")
-        return 0
-    
-def withdraw():
-    global balance
-    try:
-        amount = float(input("Enter amount to withdraw: "))
-        if amount > balance:
-            print("Insufficient funds. Withdrawal not processed.")
-            return 0
-        elif amount <= 0:
-            print("Please enter a positive amount.")
-            return 0 
-        print(f"Ksh{amount:.2f} withdrawn successfully!")
-        return amount
-    except ValueError:
-        print("Invalid input. Please enter a numeric value.")
-        return 0
-    
+            print("❌ Please enter a positive amount.")
+            return
+        self.balance += amount
+        self.save_balance()
+        print(f"✅ Ksh{amount:.2f} deposited successfully!")
+
+    def withdraw(self, amount):
+        if amount <= 0:
+            print("❌ Please enter a positive amount.")
+        elif amount > self.balance:
+            print("❌ Insufficient funds. Withdrawal not processed.")
+        else:
+            self.balance -= amount
+            self.save_balance()
+            print(f"✅ Ksh{amount:.2f} withdrawn successfully!")
+
+
 def main():
-    global balance
-    balance = 0
-    is_running = True
+    print("📋 Welcome to the CLI Banking System")
+    username = input("Enter your account name: ").strip()
+    account = BankAccount(username)
 
-    while is_running:
-        print("\nBanking Program")
-        print("1.Show balance")
-        print("2.Deposit")
-        print("3.Withdraw")
-        print("4.Exit")
+    while True:
+        print("\n===== Banking Menu =====")
+        print("1. Show balance")
+        print("2. Deposit")
+        print("3. Withdraw")
+        print("4. Exit")
 
-        choice = input("Enter your choice(1-4): ")
+        choice = input("Enter your choice (1-4): ").strip()
 
         if choice == '1':
-            show_balance()
+            account.show_balance()
+
         elif choice == '2':
-            balance += deposit()
+            try:
+                amount = float(input("Enter amount to deposit: "))
+                account.deposit(amount)
+            except ValueError:
+                print("Invalid input. Please enter a numeric value.")
+
         elif choice == '3':
-            balance -= withdraw()
+            try:
+                amount = float(input("Enter amount to withdraw: "))
+                account.withdraw(amount)
+            except ValueError:
+                print("Invalid input. Please enter a numeric value.")
+
         elif choice == '4':
-            is_running = False
-            print("Thank you! Have a nice day!")
+            print("👋 Thank you for using the banking system. Goodbye!")
+            break
+
         else:
-            print("Invalid choice! Please select a number between 1 and 4.")
-   
+            print("❌ Invalid choice! Please select a number between 1 and 4.")
+
 
 if __name__ == "__main__":
     main()

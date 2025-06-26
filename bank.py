@@ -29,25 +29,25 @@ class BankAccount:
 
     def deposit(self, amount):
         if amount <= 0:
-            print("❌ Please enter a positive amount.")
+            print("Please enter a positive amount.")
             return
         self.balance += amount
         self.save_balance()
-        print(f"✅ Ksh{amount:.2f} deposited successfully!")
+        print(f"Ksh{amount:.2f} deposited successfully!")
 
     def withdraw(self, amount):
         if amount <= 0:
-            print("❌ Please enter a positive amount.")
+            print("Please enter a positive amount.")
         elif amount > self.balance:
-            print("❌ Insufficient funds. Withdrawal not processed.")
+            print("Insufficient funds. Withdrawal not processed.")
         else:
             self.balance -= amount
             self.save_balance()
-            print(f"✅ Ksh{amount:.2f} withdrawn successfully!")
+            print(f"Ksh{amount:.2f} withdrawn successfully!")
 
 
 def main():
-    print("📋 Welcome to the CLI Banking System")
+    print("Welcome to the CLI Banking System")
     username = input("Enter your account name: ").strip()
     account = BankAccount(username)
 
@@ -78,11 +78,11 @@ def main():
                 print("Invalid input. Please enter a numeric value.")
 
         elif choice == '4':
-            print("👋 Thank you for using the banking system. Goodbye!")
+            print("Thank you for using the banking system. Goodbye!")
             break
 
         else:
-            print("❌ Invalid choice! Please select a number between 1 and 4.")
+            print("Invalid choice! Please select a number between 1 and 4.")
 
 
 if __name__ == "__main__":
